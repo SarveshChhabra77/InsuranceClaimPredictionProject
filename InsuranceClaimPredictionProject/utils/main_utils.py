@@ -3,7 +3,8 @@ from InsuranceClaimPredictionProject.exceptions.exception import ClaimPrediction
 import os
 import sys
 import yaml
-
+import numpy as np
+import pickle
 
 def write_yaml_file(file_path:str,content:object,replace:bool=False)->None:
     try:
@@ -14,5 +15,27 @@ def write_yaml_file(file_path:str,content:object,replace:bool=False)->None:
 
         with open(file_path,'w') as file_obj:
             yaml.dump(content,file_obj)
+    except Exception as e:
+        raise ClaimPredictionException(e,sys)
+
+def save_numpy_array_data(file_path:str,array:np.array):
+    try:
+        dir_path=os.path.dirname(file_path)
+        os.makedirs(dir_path,exist_ok=True)
+        with open(file_path,'wb') as file:
+            np.save(file,array)
+            
+    except Exception as e:
+        raise ClaimPredictionException(e,sys)
+    
+    
+def save_obj(file_path:str,obj:object)->None:
+    try:
+        logging.info('Entered the save-object method of main_utils ')
+        dir_path=os.path.dirname(file_path)
+        os.makedirs(dir_path,exist_ok=True)
+        with open(file_path,'wb') as file_obj:
+            pickle.dump(obj,file_obj)
+        logging.info('Exited the save_object method of the main_utils')
     except Exception as e:
         raise ClaimPredictionException(e,sys)

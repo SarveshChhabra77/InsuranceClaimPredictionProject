@@ -28,3 +28,9 @@ Data_Validation_Valid_Data_Dir:str='validated'
 Data_Validation_Invalid_Data_Dir:str='invalid'
 Data_Validation_Drift_Report_Dir:str='drift_report'
 Data_Validation_Drift_Report_File_Name:str='report.yaml'
+
+"Defining the data transformation constant names starting with data Transformation"
+DATA_TRANSFORMATION_DIR_NAME:str='data_transformation'
+DATA_TRANSFORMATION_TRANSFORMED_DATA_DIR:str='transformed'
+DATA_TRANSFORMATION_TRANSFORMED_OBJECT_DIR:str='transformed_object'
+PREPROCESSING_OBJECT_FILE_NAME:str='preprocessing.pkl'
