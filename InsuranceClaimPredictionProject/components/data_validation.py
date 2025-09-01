@@ -10,7 +10,6 @@ from typing import Dict,Union,List,Any
 from data_schema import processed_schema
 from scipy.stats import ks_2samp
 
-
 class DataValidation:
     def __init__(self,data_validation_config:DataValidationConfig,data_ingestion_artifact:DataIngestionArtifact):
         try:
@@ -113,7 +112,7 @@ class DataValidation:
         except Exception as e:
             raise ClaimPredictionException(e,sys)
         
-    
+        
     def initiate_data_validation(self)->DataValidationArtifact:
         try:
             train_file_path = self.data_ingestion_artifacts.train_file_path

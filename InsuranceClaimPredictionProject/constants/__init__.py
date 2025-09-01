@@ -22,7 +22,7 @@ Data_Ingestion_Feature_Store_Dir:str='feature_stored'
 Data_Ingestion_Ingested_Dir:str='ingested'
 Data_Ingestion_Train_Test_Split_Ratio:float=0.2
 
-"Defining the data transformation constant names starting with data Validation"
+"Defining the data validation constant names starting with data Validation"
 Data_Validation_Dir_Name:str='data_validation'
 Data_Validation_Valid_Data_Dir:str='validated'
 Data_Validation_Invalid_Data_Dir:str='invalid'
@@ -34,3 +34,11 @@ DATA_TRANSFORMATION_DIR_NAME:str='data_transformation'
 DATA_TRANSFORMATION_TRANSFORMED_DATA_DIR:str='transformed'
 DATA_TRANSFORMATION_TRANSFORMED_OBJECT_DIR:str='transformed_object'
 PREPROCESSING_OBJECT_FILE_NAME:str='preprocessing.pkl'
+
+"Defining the post data validation constant names starting with data Validation"
+Post_Data_Validation_Dir_Name:str='post_data_validation'
+Post_Data_Validation_Valid_Data_Dir:str='validated'
+Post_Data_Validation_Invalid_Data_Dir:str='invalid'
+Post_Data_Validation_Validated_OBJECT_DIR:str='transformed_object'
+Post_Data_Validation_Drift_Report_Dir:str='drift_report'
+Post_Data_Validation_Drift_Report_File_Name:str='report.yaml'

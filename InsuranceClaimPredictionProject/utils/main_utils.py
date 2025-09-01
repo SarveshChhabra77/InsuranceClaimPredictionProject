@@ -39,3 +39,21 @@ def save_obj(file_path:str,obj:object)->None:
         logging.info('Exited the save_object method of the main_utils')
     except Exception as e:
         raise ClaimPredictionException(e,sys)
+
+def load_numpy_array_data(file_path:str)->np.array:
+    try:
+        if not os.path.exists(file_path):
+            raise Exception(f'File path : {file_path} not exist')
+        with open(file_path,'rb') as file_obj:
+            return np.load(file_obj)
+    except Exception as e:
+        raise ClaimPredictionException(e,sys)
+    
+def load_obj(file_path:str)->object:
+    try:
+        if not os.path.exists(file_path):
+            raise Exception(f'The file path : {file_path} is not exist')
+        with open(file_path,'rb') as file_obj:
+            return pickle.load(file_obj)
+    except Exception as e:
+        raise ClaimPredictionException(e,sys)

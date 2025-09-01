@@ -28,13 +28,48 @@ class DataTransformation:
             return pd.read_csv(file_path)
         except Exception as e:
             raise ClaimPredictionException(e,sys)
+        
+    @staticmethod
+    def transform_dates_and_csl(df: pd.DataFrame) -> pd.DataFrame:
+        try:
+            logging.info("Starting date and CSL transformations.")
+            
+            # Convert policy_bind_date
+            if 'policy_bind_date' in df.columns:
+                df['policy_bind_date'] = pd.to_datetime(df['policy_bind_date'])
+                df['policy_bind_year'] = df['policy_bind_date'].dt.year
+                df['policy_bind_month'] = df['policy_bind_date'].dt.month
+                df['policy_bind_day'] = df['policy_bind_date'].dt.day
+                df.drop('policy_bind_date', axis=1, inplace=True)
 
+            # Convert incident_date
+            if 'incident_date' in df.columns:
+                df['incident_date'] = pd.to_datetime(df['incident_date'])
+                df['incident_date_year'] = df['incident_date'].dt.year
+                df['incident_date_month'] = df['incident_date'].dt.month
+                df['incident_date_day'] = df['incident_date'].dt.day
+                df.drop('incident_date', axis=1, inplace=True)
+
+            # Handle policy_csl (like "250/500")
+            if 'policy_csl' in df.columns:
+                df['csl_per_person'] = df['policy_csl'].str.split('/').str[0].astype(int)
+                df['csl_per_accident'] = df['policy_csl'].str.split('/').str[1].astype(int)
+                df.drop('policy_csl', axis=1, inplace=True)
+            
+            logging.info("Date and CSL transformations completed.")
+            return df
+        except Exception as e:
+            raise ClaimPredictionException(e, sys)
+    
     def build_preprocessor(self,dataframe:pd.DataFrame)->ColumnTransformer:
         try:
-            low_cat_columns = [col for col in dataframe.columns if dataframe[col].dtype=='O' and dataframe[col].nunique()<5]
-            high_cat_columns = [col for col in dataframe.columns if dataframe[col].dtype=='O' and dataframe[col].nunique()>5]
-            numerical_columns = [col for col in dataframe.columns if dataframe[col].dtype!='O']
             
+            low_cat_columns = [col for col in dataframe.columns if dataframe[col].dtype == 'O' and dataframe[col].nunique() < 5]
+            high_cat_columns = [col for col in dataframe.columns if dataframe[col].dtype == 'O' and dataframe[col].nunique() > 5]
+            numerical_columns = [col for col in dataframe.columns if dataframe[col].dtype != 'O']
+            date_columns = [col for col in dataframe.columns if "date" in col.lower()]  # or use Option 2 above
+
+                        
             low_cat_pipeline = Pipeline(
                 steps=[
                     ('imputer',SimpleImputer(strategy='most_frequent')),
@@ -71,11 +106,21 @@ class DataTransformation:
             train_df = self.read_data(self.data_validation_artifact.valid_train_file_path)
             test_df = self.read_data(self.data_validation_artifact.valid_test_file_path)
             
+            
+            
             input_feature_train_df=train_df.drop(columns=[Target_Column],axis=1)
             target_feature_train_df=train_df[Target_Column]
             
             input_feature_test_df=test_df.drop(columns=[Target_Column],axis=1)
             target_feature_test_df=test_df[Target_Column]
+            
+            input_feature_train_df = self.transform_dates_and_csl(input_feature_train_df)
+            input_feature_test_df = self.transform_dates_and_csl(input_feature_test_df)
+            
+            
+            target_feature_train_df = target_feature_train_df.map({'Y': 1 , 'N' : 0}).astype(int)
+            target_feature_test_df = target_feature_test_df.map({'Y': 1 , 'N' : 0}).astype(int)
+            
             
             preprocessor = self.build_preprocessor(dataframe=input_feature_train_df)
              
@@ -83,6 +128,10 @@ class DataTransformation:
             
             transformed_input_train_feature = preprocessor_obj.transform(input_feature_train_df)
             transformed_input_test_feature = preprocessor_obj.transform(input_feature_test_df)
+            
+            ## Handling the imbalance data
+            smote = SMOTE(random_state=42)
+            transformed_input_train_feature, target_feature_train_df = smote.fit_resample(transformed_input_train_feature, target_feature_train_df)
             
             final_train_df = np.c_[transformed_input_train_feature, target_feature_train_df.to_numpy()]
             final_test_df = np.c_[transformed_input_test_feature, target_feature_test_df.to_numpy()]

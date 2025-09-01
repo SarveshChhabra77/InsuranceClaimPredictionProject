@@ -1,8 +1,9 @@
 import sys
-from InsuranceClaimPredictionProject.entity.config_entity import TrainingPipelineConfig,DataIngestionConfig,DataValidationConfig,DataTransformationConfig,ModelTrainingConfig
+from InsuranceClaimPredictionProject.entity.config_entity import TrainingPipelineConfig,DataIngestionConfig,DataValidationConfig,DataTransformationConfig,PostDataValidationConfig,ModelTrainingConfig
 from InsuranceClaimPredictionProject.components.data_ingestion import DataIngestion
 from InsuranceClaimPredictionProject.components.data_validation import DataValidation
 from InsuranceClaimPredictionProject.components.data_transformation import DataTransformation
+from InsuranceClaimPredictionProject.components.post_validation import PostDataValidation
 from InsuranceClaimPredictionProject.logging.logger import logging
 from InsuranceClaimPredictionProject.exceptions.exception import ClaimPredictionException
 
@@ -41,6 +42,16 @@ if __name__ == '__main__':
         logging.info('Data Transformation Complted')
 
         print(data_transformation_artifact)
+        
+        post_data_validation_config = PostDataValidationConfig(training_pipeline_config)
+        
+        post_data_validation = PostDataValidation(data_transformation_artifacts=data_transformation_artifact,post_data_validation_config=post_data_validation_config)
+        
+        logging.info('Initiating Post Data Validation')
+        post_data_validation_artifact = post_data_validation.initiate_post_validation()
+        logging.info('Post Data Validation Complted')
+        
+        print(post_data_validation_artifact)
     
     except Exception as e:
         raise ClaimPredictionException(e,sys)

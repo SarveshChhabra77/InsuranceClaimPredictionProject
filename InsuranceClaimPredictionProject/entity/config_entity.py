@@ -48,6 +48,29 @@ class DataTransformationConfig:
         
         self.transformed_object_file:str = os.path.join(self.data_transformation_dir,constants.DATA_TRANSFORMATION_TRANSFORMED_OBJECT_DIR,constants.PREPROCESSING_OBJECT_FILE_NAME)
         
+class PostDataValidationConfig:
+    def __init__(self,traning_pipeline_config:TrainingPipelineConfig):
+        self.training_pipelien_config = traning_pipeline_config
         
+        self.post_data_validation_dir:str = os.path.join(self.training_pipelien_config.artifacts_dir,constants.Post_Data_Validation_Dir_Name)
+        
+        self.post_data_validation_valid_dir:str = os.path.join(self.post_data_validation_dir,constants.Post_Data_Validation_Valid_Data_Dir)
+        
+        self.post_data_validation_invalid_dir:str = os.path.join(self.post_data_validation_dir,constants.Post_Data_Validation_Invalid_Data_Dir)
+        
+        self.post_valid_train_file_path:str = os.path.join(self.post_data_validation_valid_dir,constants.Train_File_Name.replace('csv','npy'))
+        
+        self.post_valid_test_file_path:str = os.path.join(self.post_data_validation_valid_dir,constants.Test_File_Name.replace('csv','npy'))
+
+        self.post_invalid_train_file_path:str = os.path.join(self.post_data_validation_invalid_dir,constants.Train_File_Name.replace('csv','npy'))
+        
+        self.post_invalid_test_file_path:str = os.path.join(self.post_data_validation_invalid_dir,constants.Test_File_Name.replace('csv','npy'))
+        
+        self.valid_object_file_path:str  = os.path.join(self.post_data_validation_dir,constants.Post_Data_Validation_Validated_OBJECT_DIR,constants.PREPROCESSING_OBJECT_FILE_NAME)
+        
+        self.drift_report_file_name:str = os.path.join(self.post_data_validation_dir,constants.Post_Data_Validation_Drift_Report_Dir,constants.Post_Data_Validation_Drift_Report_File_Name)
+        
+        self.threshold:float = 0.05
+
 class ModelTrainingConfig:
     pass
