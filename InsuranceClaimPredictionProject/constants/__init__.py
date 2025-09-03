@@ -42,3 +42,11 @@ Post_Data_Validation_Invalid_Data_Dir:str='invalid'
 Post_Data_Validation_Validated_OBJECT_DIR:str='transformed_object'
 Post_Data_Validation_Drift_Report_Dir:str='drift_report'
 Post_Data_Validation_Drift_Report_File_Name:str='report.yaml'
+
+
+"Defining the model trainer constant names starting with model trainer var name"
+MODEL_TRAINER_DIR_NAME:str='model_trainer'
+MODEL_TRAINER_TRAINED_MODEL_DIR:str='trained_model'
+MODEL_TRAINER_TRAINED_MODEL_NAME:str='model.pkl'
+MODEL_TRAINER_EXPECTED_SCORE:float=0.7
+MODEL_TRAINER_OVER_FITTING_UNDER_FITTING_THRESHOLD:float=0.05

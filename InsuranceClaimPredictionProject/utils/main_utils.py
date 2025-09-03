@@ -1,5 +1,8 @@
 from InsuranceClaimPredictionProject.logging.logger import logging
 from InsuranceClaimPredictionProject.exceptions.exception import ClaimPredictionException
+from InsuranceClaimPredictionProject.entity.artifacts_config import ClassificationMetricArtifact
+from sklearn.model_selection import RandomizedSearchCV
+from sklearn.metrics import recall_score,roc_auc_score
 import os
 import sys
 import yaml
@@ -57,3 +60,61 @@ def load_obj(file_path:str)->object:
             return pickle.load(file_obj)
     except Exception as e:
         raise ClaimPredictionException(e,sys)
+    
+    
+def evaluate_models(x_train,y_train,x_test,y_test,models,params):
+    try:
+        report={}
+        tunned_Models={}
+        for model_name,model in models.items():
+            
+            para=params[model_name]
+            
+            rcv=RandomizedSearchCV(model,para,cv=5,n_jobs=-1,n_iter=20,random_state=42)
+            rcv.fit(x_train,y_train)
+            
+            best_model=rcv.best_estimator_
+            
+            y_pred=best_model.predict(x_test)
+            
+            test_model_recall_score=recall_score(y_test,y_pred)
+            
+            report[model_name]=test_model_recall_score
+            tunned_Models[model_name]=best_model
+            
+        return report,tunned_Models
+        
+        
+    except Exception as e:
+        raise ClaimPredictionException(e,sys)
+    
+    
+def get_classification_score(y_true,y_pred)->ClassificationMetricArtifact:
+    try:
+        model_recall_score=recall_score(y_true,y_pred)
+        model_roc_auc_score=roc_auc_score(y_true,y_pred)
+
+        regression_metric=ClassificationMetricArtifact(
+            recall_score=model_recall_score,
+            roc_auc_score=model_roc_auc_score
+        )
+        return regression_metric
+    except Exception as e:
+        raise ClaimPredictionException(e,sys)
+
+
+class ClaimPredictionModel:
+    
+    def __init__(self,preprocessor,model):
+        try:
+            self.preprocessor=preprocessor
+            self.model=model
+        except Exception as e:
+            raise ClaimPredictionException(e,sys)
+    def predict(self,x):
+        try:
+            x_transform=self.preprocessor.transform(x)
+            y_pred=self.model.predict(x_transform)
+            return y_pred
+        except Exception as e:
+            raise ClaimPredictionException(e,sys)

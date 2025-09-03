@@ -4,6 +4,7 @@ from InsuranceClaimPredictionProject.components.data_ingestion import DataIngest
 from InsuranceClaimPredictionProject.components.data_validation import DataValidation
 from InsuranceClaimPredictionProject.components.data_transformation import DataTransformation
 from InsuranceClaimPredictionProject.components.post_validation import PostDataValidation
+from InsuranceClaimPredictionProject.components.model_trainer import ModelTrainer
 from InsuranceClaimPredictionProject.logging.logger import logging
 from InsuranceClaimPredictionProject.exceptions.exception import ClaimPredictionException
 
@@ -52,6 +53,16 @@ if __name__ == '__main__':
         logging.info('Post Data Validation Complted')
         
         print(post_data_validation_artifact)
+        
+        model_trainer_config = ModelTrainingConfig(training_pipeline_config)
+        
+        model_trainer = ModelTrainer(model_trainer_config=model_trainer_config,post_data_validation_artifact=post_data_validation_artifact)
+
+        logging.info('Initiating Model Trainer')
+        model_trainer_artifact = model_trainer.initiate_model_trainer()
+        logging.info('Model training Completed')
+
+        print(model_trainer_artifact)
     
     except Exception as e:
         raise ClaimPredictionException(e,sys)

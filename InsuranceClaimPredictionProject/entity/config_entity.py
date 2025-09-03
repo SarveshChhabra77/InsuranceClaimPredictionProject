@@ -73,4 +73,12 @@ class PostDataValidationConfig:
         self.threshold:float = 0.05
 
 class ModelTrainingConfig:
-    pass
+    def __init__(self,training_pipeline_config:TrainingPipelineConfig):
+        
+        self.model_training_dir:str = os.path.join(training_pipeline_config.artifacts_dir,constants.MODEL_TRAINER_DIR_NAME)
+
+        self.trained_model_file_path:str = os.path.join(self.model_training_dir,constants.MODEL_TRAINER_TRAINED_MODEL_NAME)
+        
+        self.expected_r2_score:float = constants.MODEL_TRAINER_EXPECTED_SCORE
+        
+        self.overfittting_underfitting_threshold:float = constants.MODEL_TRAINER_OVER_FITTING_UNDER_FITTING_THRESHOLD

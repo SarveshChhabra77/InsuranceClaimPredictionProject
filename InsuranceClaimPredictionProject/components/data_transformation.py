@@ -67,8 +67,6 @@ class DataTransformation:
             low_cat_columns = [col for col in dataframe.columns if dataframe[col].dtype == 'O' and dataframe[col].nunique() < 5]
             high_cat_columns = [col for col in dataframe.columns if dataframe[col].dtype == 'O' and dataframe[col].nunique() > 5]
             numerical_columns = [col for col in dataframe.columns if dataframe[col].dtype != 'O']
-            date_columns = [col for col in dataframe.columns if "date" in col.lower()]  # or use Option 2 above
-
                         
             low_cat_pipeline = Pipeline(
                 steps=[
@@ -120,7 +118,6 @@ class DataTransformation:
             
             target_feature_train_df = target_feature_train_df.map({'Y': 1 , 'N' : 0}).astype(int)
             target_feature_test_df = target_feature_test_df.map({'Y': 1 , 'N' : 0}).astype(int)
-            
             
             preprocessor = self.build_preprocessor(dataframe=input_feature_train_df)
              
