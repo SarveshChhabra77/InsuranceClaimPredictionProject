@@ -42,93 +42,16 @@ class ModelTrainer:
         
     def model_trainer(self,X_train,y_train,X_test,y_test):
         try:
+            ## Keeping only generalized model
             classification_models = {
-                    "Logistic Regression": LogisticRegression(),
-                    "K-Nearest Neighbors": KNeighborsClassifier(),
-                    "Decision Tree": DecisionTreeClassifier(),
+                    "CatBoost": CatBoostClassifier(verbose=False,early_stopping_rounds=50,class_weights=[1, 5]),
                     "Random Forest": RandomForestClassifier(),
-                    "Extra Trees": ExtraTreesClassifier(),
                     "AdaBoost": AdaBoostClassifier(),
                     "Gradient Boosting": GradientBoostingClassifier(),
-                    "XGBoost": XGBClassifier(),
-                    "CatBoost": CatBoostClassifier(verbose=False),
-                    "Naive Bayes (Gaussian)": GaussianNB()
+                    "XGBoost": XGBClassifier()
                 }
             param_grids = {
-                    "Logistic Regression": {
-                        "penalty": ["l1", "l2", "elasticnet", "none"],
-                        "C": [0.01, 0.1, 1, 10, 100],
-                        "solver": ["lbfgs", "liblinear", "saga", "newton-cg"],
-                        "max_iter": [100, 200, 500],
-                        "class_weight": [None, "balanced"]
-                    },
-                    
-                    "K-Nearest Neighbors": {
-                        "n_neighbors": [3, 5, 7, 9, 11],
-                        "weights": ["uniform", "distance"],
-                        "metric": ["euclidean", "manhattan", "minkowski"],
-                        "p": [1, 2]
-                    },
-                    
-                    "Decision Tree": {
-                        "criterion": ["gini", "entropy"],
-                        "max_depth": [None, 5, 10, 20, 30],
-                        "min_samples_split": [2, 5, 10],
-                        "min_samples_leaf": [1, 2, 4],
-                        "max_features": [None, "sqrt", "log2"],
-                        "class_weight": [None, "balanced"]
-                    },
-                    
-                    "Random Forest": {
-                        "n_estimators": [100, 200, 300],
-                        "criterion": ["gini", "entropy"],
-                        "max_depth": [None, 10, 20, 30],
-                        "min_samples_split": [2, 5, 10],
-                        "min_samples_leaf": [1, 2, 4],
-                        "max_features": ["sqrt", "log2", None],
-                        "bootstrap": [True, False],
-                        "class_weight": [None, "balanced"]
-                    },
-                    
-                    "Extra Trees": {
-                        "n_estimators": [100, 200, 300],
-                        "criterion": ["gini", "entropy"],
-                        "max_depth": [None, 10, 20, 30],
-                        "min_samples_split": [2, 5, 10],
-                        "min_samples_leaf": [1, 2, 4],
-                        "max_features": ["sqrt", "log2", None],
-                        "bootstrap": [True, False],
-                        "class_weight": [None, "balanced"]
-                    },
-                    
-                    "AdaBoost": {
-                        "n_estimators": [50, 100, 200, 300],
-                        "learning_rate": [0.001, 0.01, 0.1, 0.5, 1],
-                        "algorithm": ["SAMME", "SAMME.R"]
-                    },
-                    
-                    "Gradient Boosting": {
-                        "n_estimators": [100, 200, 300],
-                        "learning_rate": [0.001, 0.01, 0.1, 0.2],
-                        "max_depth": [3, 5, 7],
-                        "min_samples_split": [2, 5, 10],
-                        "min_samples_leaf": [1, 2, 4],
-                        "subsample": [0.6, 0.8, 1.0],
-                        "max_features": [None, "sqrt", "log2"]
-                    },
-                    
-                    "XGBoost": {
-                        "n_estimators": [100, 200, 300],
-                        "learning_rate": [0.001, 0.01, 0.1, 0.2],
-                        "max_depth": [3, 5, 7, 10],
-                        "subsample": [0.6, 0.8, 1.0],
-                        "colsample_bytree": [0.6, 0.8, 1.0],
-                        "gamma": [0, 0.1, 0.3, 0.5],
-                        "reg_alpha": [0, 0.01, 0.1, 1],
-                        "reg_lambda": [1, 1.5, 2]
-                    },
-                    
-                    "CatBoost": {
+                "CatBoost": {
                         "depth": [4, 6, 8, 10, 12],
                         "learning_rate": [0.01, 0.03, 0.05, 0.1, 0.2],
                         "iterations": [200, 500, 800, 1000],
@@ -140,16 +63,58 @@ class ModelTrainer:
                         "min_data_in_leaf": [1, 5, 10, 20, 50],
                         "max_bin": [128, 254, 512]
                     },
-                    
-                    "Naive Bayes (Gaussian)": {
-                        "var_smoothing": [1e-9, 1e-8, 1e-7, 1e-6]
+
+                    "Random Forest": {
+                        "n_estimators": [100, 200, 300],
+                        "criterion": ["gini", "entropy"],
+                        "max_depth": [None, 10, 20, 30],
+                        "min_samples_split": [2, 5, 10],
+                        "min_samples_leaf": [1, 2, 4],
+                        "max_features": ["sqrt", "log2", None],
+                        "bootstrap": [True, False],
+                        "class_weight": [None, "balanced"]
+                    },
+
+                    "AdaBoost": {
+                        "n_estimators": [50, 100, 200, 300],
+                        "learning_rate": [0.001, 0.01, 0.1, 0.5, 1],
+                        "algorithm": ["SAMME"]  # "SAMME.R" is deprecated & causes errors
+                    },
+
+                    "Gradient Boosting": {
+                        "n_estimators": [100, 200, 300],
+                        "learning_rate": [0.001, 0.01, 0.1, 0.2],
+                        "max_depth": [3, 5, 7],
+                        "min_samples_split": [2, 5, 10],
+                        "min_samples_leaf": [1, 2, 4],
+                        "subsample": [0.6, 0.8, 1.0],
+                        "max_features": [None, "sqrt", "log2"]
+                    },
+
+                    "XGBoost": {
+                        "n_estimators": [100, 200, 300],
+                        "learning_rate": [0.001, 0.01, 0.1, 0.2],
+                        "max_depth": [3, 5, 7, 10],
+                        "subsample": [0.6, 0.8, 1.0],
+                        "colsample_bytree": [0.6, 0.8, 1.0],
+                        "gamma": [0, 0.1, 0.3, 0.5],
+                        "reg_alpha": [0, 0.01, 0.1, 1],
+                        "reg_lambda": [1, 1.5, 2]
                     }
+
+                    
                 }
+
             
             model_report,tunned_model = evaluate_models(X_train,y_train,X_test,y_test,classification_models,param_grids)
             
-            best_model_score = max(list(model_report.values))
-            best_model_name = list(model_report.keys())[list(model_report.values()).index(best_model_score)]
+            
+            best_model_name = max(model_report, key=lambda k: model_report[k]["final_score"])
+            best_model_score = model_report[best_model_name]["final_score"]
+            best_model = tunned_model[best_model_name]
+                        
+            logging.info(f"Best Model Selected: {best_model_name} with score: {best_model_score}")
+
             
             best_model = tunned_model[best_model_name]
             
@@ -168,11 +133,11 @@ class ModelTrainer:
             preprocessor = load_obj(self.post_data_validation_artifact.valid_object_file_path)
             
             model_dir_path = os.path.dirname(self.model_trainer_config.trained_model_file_path)
-            os.makedirs(model_dir_path)
+            os.makedirs(model_dir_path,exist_ok=True)
             
             model = ClaimPredictionModel(preprocessor=preprocessor,model= best_model)
             
-            save_obj(self.model_trainer_config.trained_model_file_path)
+            save_obj(file_path=self.model_trainer_config.trained_model_file_path,obj=model)
 
             save_obj('final_model/model.pkl',model)
 
@@ -183,7 +148,8 @@ class ModelTrainer:
                 test_metric_artifact = classification_test_metrics
             )
             
-            logging.info('Model Trainer Artifact ', model_trainer_artifact)
+            # preferred
+            logging.info(f"Model Trainer Artifact: {model_trainer_artifact}")
 
             return model_trainer_artifact
             

@@ -1,0 +1,14 @@
+artifact_uri: file:///D:/Insurance%20Claim%20Prediction%20Project/mlruns/0/a1610d67ef0e41d5a41474e6a39c8cdb/artifacts
+end_time: 1756999430830
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: a1610d67ef0e41d5a41474e6a39c8cdb
+run_name: bright-turtle-318
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1756999419962
+status: 3
+tags: []
+user_id: HP

@@ -25,8 +25,7 @@ class DataIngestion:
             feature_stored_file_path = self.data_ingestion_config.feature_stored_file_path
             feature_stored_dir = os.path.dirname(feature_stored_file_path)
             os.makedirs(feature_stored_dir,exist_ok=True)
-            df = self.export_data_as_dataframe()
-            df.to_csv(feature_stored_file_path,header=True,index=False)
+            dataframe.to_csv(feature_stored_file_path,header=True,index=False)
         except Exception as e:
             raise ClaimPredictionException(e,sys)
         
@@ -39,7 +38,6 @@ class DataIngestion:
             train_file_path = self.data_ingestion_config.train_file_path
             test_file_path = self.data_ingestion_config.test_file_path
             ingested_dir = os.path.dirname(train_file_path)
-            
             os.makedirs(ingested_dir,exist_ok=True)
             logging.info('Exporting Dataframe as Train and Test file')
             train_set.to_csv(train_file_path)

@@ -1,0 +1,14 @@
+artifact_uri: file:///D:/Insurance%20Claim%20Prediction%20Project/mlruns/0/8f6501b3cc60402c84e557d720c91269/artifacts
+end_time: 1756927882488
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 8f6501b3cc60402c84e557d720c91269
+run_name: judicious-perch-335
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1756927859571
+status: 3
+tags: []
+user_id: HP

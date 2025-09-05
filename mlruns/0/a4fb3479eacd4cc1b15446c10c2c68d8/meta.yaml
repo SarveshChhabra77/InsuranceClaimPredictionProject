@@ -1,0 +1,14 @@
+artifact_uri: file:///D:/Insurance%20Claim%20Prediction%20Project/mlruns/0/a4fb3479eacd4cc1b15446c10c2c68d8/artifacts
+end_time: 1757009711583
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: a4fb3479eacd4cc1b15446c10c2c68d8
+run_name: chill-stork-975
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1757009703825
+status: 3
+tags: []
+user_id: HP

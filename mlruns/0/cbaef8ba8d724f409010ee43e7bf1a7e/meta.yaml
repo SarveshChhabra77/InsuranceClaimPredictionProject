@@ -1,0 +1,14 @@
+artifact_uri: file:///D:/Insurance%20Claim%20Prediction%20Project/mlruns/0/cbaef8ba8d724f409010ee43e7bf1a7e/artifacts
+end_time: 1757002563002
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: cbaef8ba8d724f409010ee43e7bf1a7e
+run_name: abundant-gull-432
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1757002554770
+status: 3
+tags: []
+user_id: HP

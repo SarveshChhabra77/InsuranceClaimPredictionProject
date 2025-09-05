@@ -1,0 +1,10 @@
+artifact_location: file:///D:/Insurance%20Claim%20Prediction%20Project/mlruns/0/models/m-885990b04d22461cb7c2f0640c6743f2/artifacts
+creation_timestamp: 1757002554971
+experiment_id: '0'
+last_updated_timestamp: 1757002562974
+model_id: m-885990b04d22461cb7c2f0640c6743f2
+model_type: null
+name: Classification_Model
+source_run_id: cbaef8ba8d724f409010ee43e7bf1a7e
+status: 2
+status_message: null

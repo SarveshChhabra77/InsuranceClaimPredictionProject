@@ -1,0 +1,14 @@
+artifact_uri: file:///D:/Insurance%20Claim%20Prediction%20Project/mlruns/0/1a30ffb5137e4b479847bd964a92aa24/artifacts
+end_time: 1756927894638
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 1a30ffb5137e4b479847bd964a92aa24
+run_name: grandiose-roo-30
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1756927882520
+status: 3
+tags: []
+user_id: HP

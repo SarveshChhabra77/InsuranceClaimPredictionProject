@@ -7,6 +7,11 @@ from InsuranceClaimPredictionProject.components.post_validation import PostDataV
 from InsuranceClaimPredictionProject.components.model_trainer import ModelTrainer
 from InsuranceClaimPredictionProject.logging.logger import logging
 from InsuranceClaimPredictionProject.exceptions.exception import ClaimPredictionException
+import warnings
+from sklearn.exceptions import ConvergenceWarning
+
+
+warnings.filterwarnings("ignore")
 
 
 

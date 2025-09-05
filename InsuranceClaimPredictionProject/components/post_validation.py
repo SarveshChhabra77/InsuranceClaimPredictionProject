@@ -83,15 +83,17 @@ class PostDataValidation:
             status = True
             report = {}
 
-            n_features = base_array.shape[1]
+            n_features = base_array.shape[1] - 1
+            logging.info(f"Detecting dataset drift on {n_features} features (excluding target).")
 
             for i in range(n_features):
                 base_col = base_array[:, i]
                 current_col = current_array[:, i]
 
-                # Ensure columns are numeric for KS test
-                base_col = base_col.astype(float)
-                current_col = current_col.astype(float)
+                if base_col.dtype != np.float64:
+                    base_col = base_col.astype(float)
+                if current_col.dtype != np.float64:
+                    current_col = current_col.astype(float)
 
                 # ks_2samp works on 1D arrays
                 test_result = ks_2samp(base_col, current_col)

@@ -1,0 +1,14 @@
+artifact_uri: file:///D:/Insurance%20Claim%20Prediction%20Project/mlruns/0/68432e47efa34431b347e98d493980f7/artifacts
+end_time: 1757009703781
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 68432e47efa34431b347e98d493980f7
+run_name: able-rat-916
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1757009691658
+status: 3
+tags: []
+user_id: HP

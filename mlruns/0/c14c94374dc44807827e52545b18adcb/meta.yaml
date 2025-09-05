@@ -1,0 +1,14 @@
+artifact_uri: file:///D:/Insurance%20Claim%20Prediction%20Project/mlruns/0/c14c94374dc44807827e52545b18adcb/artifacts
+end_time: 1756924756959
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: c14c94374dc44807827e52545b18adcb
+run_name: enthused-shrew-144
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1756924734711
+status: 3
+tags: []
+user_id: HP

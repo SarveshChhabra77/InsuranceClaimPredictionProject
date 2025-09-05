@@ -1,0 +1,14 @@
+artifact_uri: file:///D:/Insurance%20Claim%20Prediction%20Project/mlruns/0/3726bf48dfc34b1d9041b01654c17cc7/artifacts
+end_time: 1757006932452
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 3726bf48dfc34b1d9041b01654c17cc7
+run_name: bouncy-bat-361
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1757006918183
+status: 3
+tags: []
+user_id: HP

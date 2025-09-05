@@ -1,0 +1,14 @@
+artifact_uri: file:///D:/Insurance%20Claim%20Prediction%20Project/mlruns/0/9b87ce2724b14b779a0572558fbe5cee/artifacts
+end_time: 1756924768736
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 9b87ce2724b14b779a0572558fbe5cee
+run_name: powerful-hog-374
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1756924757030
+status: 3
+tags: []
+user_id: HP

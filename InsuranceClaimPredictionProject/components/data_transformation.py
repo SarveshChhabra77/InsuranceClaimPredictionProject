@@ -18,7 +18,7 @@ class DataTransformation:
     def __init__(self,data_validation_artifact:DataValidationArtifact,data_tranformation_config:DataTransformationConfig):
         try:
             self.data_validation_artifact = data_validation_artifact
-            self.data_transforamtion_config = data_tranformation_config
+            self.data_transformation_config = data_tranformation_config
         except Exception as e:
             raise ClaimPredictionException(e,sys)
 
@@ -64,7 +64,7 @@ class DataTransformation:
     def build_preprocessor(self,dataframe:pd.DataFrame)->ColumnTransformer:
         try:
             
-            low_cat_columns = [col for col in dataframe.columns if dataframe[col].dtype == 'O' and dataframe[col].nunique() < 5]
+            low_cat_columns = [col for col in dataframe.columns if dataframe[col].dtype == 'O' and dataframe[col].nunique() <= 5]
             high_cat_columns = [col for col in dataframe.columns if dataframe[col].dtype == 'O' and dataframe[col].nunique() > 5]
             numerical_columns = [col for col in dataframe.columns if dataframe[col].dtype != 'O']
                         
@@ -88,9 +88,9 @@ class DataTransformation:
             )
             preprocessor = ColumnTransformer(
                 transformers=[
-                    ('low_cat_col',low_cat_pipeline,low_cat_columns),
-                    ('high_cat_col',high_cat_pipeline,high_cat_columns),
-                    ('numerical-columns',numerical_columns_pipeline,numerical_columns)
+                    ('low_cat_col', low_cat_pipeline, low_cat_columns),
+                    ('high_cat_col', high_cat_pipeline, high_cat_columns),
+                    ('numerical-columns', numerical_columns_pipeline, numerical_columns)
                 ]
             )
             
@@ -133,17 +133,17 @@ class DataTransformation:
             final_train_df = np.c_[transformed_input_train_feature, target_feature_train_df.to_numpy()]
             final_test_df = np.c_[transformed_input_test_feature, target_feature_test_df.to_numpy()]
             
-            save_numpy_array_data(self.data_transforamtion_config.transformed_train_file_path,final_train_df)
-            save_numpy_array_data(self.data_transforamtion_config.transformed_test_file_path,final_test_df)
+            save_numpy_array_data(self.data_transformation_config.transformed_train_file_path,final_train_df)
+            save_numpy_array_data(self.data_transformation_config.transformed_test_file_path,final_test_df)
             
-            save_obj(self.data_transforamtion_config.transformed_object_file,preprocessor_obj)
+            save_obj(self.data_transformation_config.transformed_object_file,preprocessor_obj)
             
             save_obj('final_model/preprocessor.pkl',preprocessor_obj)
             
             data_transformation_artifact = DataTransformationArtifacts(
-                transformed_train_file_path = self.data_transforamtion_config.transformed_train_file_path,
-                transformed_test_file_path = self.data_transforamtion_config.transformed_test_file_path,
-                transformed_object_file_path = self.data_transforamtion_config.transformed_object_file
+                transformed_train_file_path = self.data_transformation_config.transformed_train_file_path,
+                transformed_test_file_path = self.data_transformation_config.transformed_test_file_path,
+                transformed_object_file_path = self.data_transformation_config.transformed_object_file
             )
             
             return data_transformation_artifact

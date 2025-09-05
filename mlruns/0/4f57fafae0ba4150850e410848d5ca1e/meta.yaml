@@ -1,0 +1,14 @@
+artifact_uri: file:///D:/Insurance%20Claim%20Prediction%20Project/mlruns/0/4f57fafae0ba4150850e410848d5ca1e/artifacts
+end_time: 1756922911313
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+run_id: 4f57fafae0ba4150850e410848d5ca1e
+run_name: bemused-bug-77
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1756922888868
+status: 3
+tags: []
+user_id: HP
