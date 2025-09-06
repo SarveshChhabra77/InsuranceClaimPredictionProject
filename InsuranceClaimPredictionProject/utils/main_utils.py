@@ -3,6 +3,7 @@ from InsuranceClaimPredictionProject.exceptions.exception import ClaimPrediction
 from InsuranceClaimPredictionProject.entity.artifacts_config import ClassificationMetricArtifact
 from sklearn.model_selection import RandomizedSearchCV
 from sklearn.metrics import recall_score,roc_auc_score
+from sklearn.base import BaseEstimator, TransformerMixin
 import os
 import sys
 import yaml
@@ -181,3 +182,42 @@ class ClaimPredictionModel:
             return y_pred
         except Exception as e:
             raise ClaimPredictionException(e,sys)
+        
+
+
+class CustomTransformer(BaseEstimator, TransformerMixin):
+    def __init__(self):
+        pass
+
+    def fit(self, X, y=None):
+        return self
+
+    def transform(self, X):
+        df = X.copy()
+        # Date transformations
+        if 'policy_bind_date' in df.columns:
+            df['policy_bind_date'] = pd.to_datetime(df['policy_bind_date'])
+            df['policy_bind_year'] = df['policy_bind_date'].dt.year
+            df['policy_bind_month'] = df['policy_bind_date'].dt.month
+            df['policy_bind_day'] = df['policy_bind_date'].dt.day
+            df.drop('policy_bind_date', axis=1, inplace=True)
+
+        if 'incident_date' in df.columns:
+            df['incident_date'] = pd.to_datetime(df['incident_date'])
+            df['incident_date_year'] = df['incident_date'].dt.year
+            df['incident_date_month'] = df['incident_date'].dt.month
+            df['incident_date_day'] = df['incident_date'].dt.day
+            df.drop('incident_date', axis=1, inplace=True)
+
+        # CSL
+        if 'policy_csl' in df.columns:
+            df['csl_per_person'] = df['policy_csl'].str.split('/').str[0].astype(int)
+            df['csl_per_accident'] = df['policy_csl'].str.split('/').str[1].astype(int)
+            df.drop('policy_csl', axis=1, inplace=True)
+
+        # Drop unwanted columns
+        drop_cols = ["policy_number", "insured_zip", "incident_state", "incident_city",
+                     "incident_location", "_c39"]
+        df = df.drop(columns=[c for c in drop_cols if c in df.columns], errors='ignore')
+
+        return df

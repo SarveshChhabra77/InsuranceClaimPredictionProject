@@ -3,7 +3,7 @@ from InsuranceClaimPredictionProject.entity.config_entity import DataTransformat
 from InsuranceClaimPredictionProject.exceptions.exception import ClaimPredictionException
 from InsuranceClaimPredictionProject.logging.logger import logging
 from InsuranceClaimPredictionProject.constants import Target_Column
-from InsuranceClaimPredictionProject.utils.main_utils import save_numpy_array_data,save_obj
+from InsuranceClaimPredictionProject.utils.main_utils import save_numpy_array_data,save_obj,CustomTransformer
 import sys
 import pandas as pd
 from sklearn.pipeline import Pipeline
@@ -29,44 +29,13 @@ class DataTransformation:
         except Exception as e:
             raise ClaimPredictionException(e,sys)
         
-    @staticmethod
-    def transform_dates_and_csl(df: pd.DataFrame) -> pd.DataFrame:
-        try:
-            logging.info("Starting date and CSL transformations.")
-            
-            # Convert policy_bind_date
-            if 'policy_bind_date' in df.columns:
-                df['policy_bind_date'] = pd.to_datetime(df['policy_bind_date'])
-                df['policy_bind_year'] = df['policy_bind_date'].dt.year
-                df['policy_bind_month'] = df['policy_bind_date'].dt.month
-                df['policy_bind_day'] = df['policy_bind_date'].dt.day
-                df.drop('policy_bind_date', axis=1, inplace=True)
-
-            # Convert incident_date
-            if 'incident_date' in df.columns:
-                df['incident_date'] = pd.to_datetime(df['incident_date'])
-                df['incident_date_year'] = df['incident_date'].dt.year
-                df['incident_date_month'] = df['incident_date'].dt.month
-                df['incident_date_day'] = df['incident_date'].dt.day
-                df.drop('incident_date', axis=1, inplace=True)
-
-            # Handle policy_csl (like "250/500")
-            if 'policy_csl' in df.columns:
-                df['csl_per_person'] = df['policy_csl'].str.split('/').str[0].astype(int)
-                df['csl_per_accident'] = df['policy_csl'].str.split('/').str[1].astype(int)
-                df.drop('policy_csl', axis=1, inplace=True)
-            
-            logging.info("Date and CSL transformations completed.")
-            return df
-        except Exception as e:
-            raise ClaimPredictionException(e, sys)
     
     def build_preprocessor(self,dataframe:pd.DataFrame)->ColumnTransformer:
-        try:
+        try: 
             
             low_cat_columns = [col for col in dataframe.columns if dataframe[col].dtype == 'O' and dataframe[col].nunique() <= 5]
             high_cat_columns = [col for col in dataframe.columns if dataframe[col].dtype == 'O' and dataframe[col].nunique() > 5]
-            numerical_columns = [col for col in dataframe.columns if dataframe[col].dtype != 'O']
+            numerical_columns = [col for col in dataframe.columns if dataframe[col].dtype != 'O']           
                         
             low_cat_pipeline = Pipeline(
                 steps=[
@@ -86,13 +55,18 @@ class DataTransformation:
                     ('scaler' , StandardScaler())
                 ]
             )
-            preprocessor = ColumnTransformer(
+            feature_transformer = ColumnTransformer(
                 transformers=[
                     ('low_cat_col', low_cat_pipeline, low_cat_columns),
                     ('high_cat_col', high_cat_pipeline, high_cat_columns),
                     ('numerical-columns', numerical_columns_pipeline, numerical_columns)
                 ]
             )
+            
+            preprocessor = Pipeline([
+            ('custom_transform', CustomTransformer()),
+            ('feature_transform', feature_transformer)
+            ])
             
             return preprocessor
         except Exception as e:
@@ -111,9 +85,6 @@ class DataTransformation:
             
             input_feature_test_df=test_df.drop(columns=[Target_Column],axis=1)
             target_feature_test_df=test_df[Target_Column]
-            
-            input_feature_train_df = self.transform_dates_and_csl(input_feature_train_df)
-            input_feature_test_df = self.transform_dates_and_csl(input_feature_test_df)
             
             
             target_feature_train_df = target_feature_train_df.map({'Y': 1 , 'N' : 0}).astype(int)
