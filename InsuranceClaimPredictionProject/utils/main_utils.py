@@ -3,10 +3,10 @@ from InsuranceClaimPredictionProject.exceptions.exception import ClaimPrediction
 from InsuranceClaimPredictionProject.entity.artifacts_config import ClassificationMetricArtifact
 from sklearn.model_selection import RandomizedSearchCV
 from sklearn.metrics import recall_score,roc_auc_score
-from sklearn.base import BaseEstimator, TransformerMixin
 import os
 import sys
 import yaml
+import pandas as pd
 import numpy as np
 import pickle
 
@@ -64,35 +64,6 @@ def load_obj(file_path:str)->object:
     
     
 
-
-# def evaluate_models(x_train, y_train, x_test, y_test, models, params):
-#     try:
-#         report = {}
-#         tunned_Models = {}
-
-#         for model_name, model in models.items():
-#             para = params[model_name]
-
-#             rcv = RandomizedSearchCV(model, para, cv=5, n_jobs=-1, n_iter=20, random_state=42)
-#             rcv.fit(x_train, y_train)
-
-#             best_model = rcv.best_estimator_
-#             y_pred = best_model.predict(x_test)
-
-#             # ✅ Calculate multiple metrics
-#             test_recall = recall_score(y_test, y_pred)
-#             test_roc_auc = roc_auc_score(y_test, y_pred)
-
-#             # ✅ Weighted score (you can tune weights based on business need)
-#             final_score = (0.6 * test_recall) + (0.4 * test_roc_auc)
-
-#             report[model_name] = final_score
-#             tunned_Models[model_name] = best_model
-
-#         return report, tunned_Models
-
-#     except Exception as e:
-#         raise ClaimPredictionException(e, sys)
 
 
 
@@ -185,39 +156,39 @@ class ClaimPredictionModel:
         
 
 
-class CustomTransformer(BaseEstimator, TransformerMixin):
-    def __init__(self):
-        pass
+def transform_dates_and_csl(df: pd.DataFrame) -> pd.DataFrame:
+        try:
+            logging.info("Starting date and CSL transformations.")
+            
+            # Convert policy_bind_date
+            if 'policy_bind_date' in df.columns:
+                df['policy_bind_date'] = pd.to_datetime(df['policy_bind_date'])
+                df['policy_bind_year'] = df['policy_bind_date'].dt.year
+                df['policy_bind_month'] = df['policy_bind_date'].dt.month
+                df['policy_bind_day'] = df['policy_bind_date'].dt.day
+                df.drop('policy_bind_date', axis=1, inplace=True)
 
-    def fit(self, X, y=None):
-        return self
+            # Convert incident_date
+            if 'incident_date' in df.columns:
+                df['incident_date'] = pd.to_datetime(df['incident_date'])
+                df['incident_date_year'] = df['incident_date'].dt.year
+                df['incident_date_month'] = df['incident_date'].dt.month
+                df['incident_date_day'] = df['incident_date'].dt.day
+                df.drop('incident_date', axis=1, inplace=True)
 
-    def transform(self, X):
-        df = X.copy()
-        # Date transformations
-        if 'policy_bind_date' in df.columns:
-            df['policy_bind_date'] = pd.to_datetime(df['policy_bind_date'])
-            df['policy_bind_year'] = df['policy_bind_date'].dt.year
-            df['policy_bind_month'] = df['policy_bind_date'].dt.month
-            df['policy_bind_day'] = df['policy_bind_date'].dt.day
-            df.drop('policy_bind_date', axis=1, inplace=True)
+            # Handle policy_csl (like "250/500")
+            if 'policy_csl' in df.columns:
+                df['csl_per_person'] = df['policy_csl'].str.split('/').str[0].astype(int)
+                df.drop('policy_csl', axis=1, inplace=True)
+            
+            # Drop columns not needed
+            drop_cols = [
+                "policy_number", "insured_zip", "incident_state", "incident_city",
+                "incident_location", "policy_csl", "_c39"
+            ]
+            df = df.drop(columns=[c for c in drop_cols if c in df.columns], errors='ignore')
 
-        if 'incident_date' in df.columns:
-            df['incident_date'] = pd.to_datetime(df['incident_date'])
-            df['incident_date_year'] = df['incident_date'].dt.year
-            df['incident_date_month'] = df['incident_date'].dt.month
-            df['incident_date_day'] = df['incident_date'].dt.day
-            df.drop('incident_date', axis=1, inplace=True)
-
-        # CSL
-        if 'policy_csl' in df.columns:
-            df['csl_per_person'] = df['policy_csl'].str.split('/').str[0].astype(int)
-            df['csl_per_accident'] = df['policy_csl'].str.split('/').str[1].astype(int)
-            df.drop('policy_csl', axis=1, inplace=True)
-
-        # Drop unwanted columns
-        drop_cols = ["policy_number", "insured_zip", "incident_state", "incident_city",
-                     "incident_location", "_c39"]
-        df = df.drop(columns=[c for c in drop_cols if c in df.columns], errors='ignore')
-
-        return df
+            logging.info("Date and CSL transformations completed.")
+            return df
+        except Exception as e:
+            raise ClaimPredictionException(e, sys)

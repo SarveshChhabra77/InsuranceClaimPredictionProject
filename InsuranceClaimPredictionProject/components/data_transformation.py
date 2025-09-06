@@ -3,7 +3,7 @@ from InsuranceClaimPredictionProject.entity.config_entity import DataTransformat
 from InsuranceClaimPredictionProject.exceptions.exception import ClaimPredictionException
 from InsuranceClaimPredictionProject.logging.logger import logging
 from InsuranceClaimPredictionProject.constants import Target_Column
-from InsuranceClaimPredictionProject.utils.main_utils import save_numpy_array_data,save_obj,CustomTransformer
+from InsuranceClaimPredictionProject.utils.main_utils import save_numpy_array_data,save_obj,transform_dates_and_csl
 import sys
 import pandas as pd
 from sklearn.pipeline import Pipeline
@@ -25,17 +25,17 @@ class DataTransformation:
     @staticmethod
     def read_data(file_path:str)->pd.DataFrame:
         try:
-            return pd.read_csv(file_path)
+            return pd.read_csv(file_path,index_col=0)
         except Exception as e:
             raise ClaimPredictionException(e,sys)
         
     
     def build_preprocessor(self,dataframe:pd.DataFrame)->ColumnTransformer:
-        try: 
+        try:
             
             low_cat_columns = [col for col in dataframe.columns if dataframe[col].dtype == 'O' and dataframe[col].nunique() <= 5]
             high_cat_columns = [col for col in dataframe.columns if dataframe[col].dtype == 'O' and dataframe[col].nunique() > 5]
-            numerical_columns = [col for col in dataframe.columns if dataframe[col].dtype != 'O']           
+            numerical_columns = [col for col in dataframe.columns if dataframe[col].dtype != 'O']
                         
             low_cat_pipeline = Pipeline(
                 steps=[
@@ -55,18 +55,13 @@ class DataTransformation:
                     ('scaler' , StandardScaler())
                 ]
             )
-            feature_transformer = ColumnTransformer(
+            preprocessor = ColumnTransformer(
                 transformers=[
                     ('low_cat_col', low_cat_pipeline, low_cat_columns),
                     ('high_cat_col', high_cat_pipeline, high_cat_columns),
                     ('numerical-columns', numerical_columns_pipeline, numerical_columns)
                 ]
             )
-            
-            preprocessor = Pipeline([
-            ('custom_transform', CustomTransformer()),
-            ('feature_transform', feature_transformer)
-            ])
             
             return preprocessor
         except Exception as e:
@@ -85,6 +80,9 @@ class DataTransformation:
             
             input_feature_test_df=test_df.drop(columns=[Target_Column],axis=1)
             target_feature_test_df=test_df[Target_Column]
+            
+            input_feature_train_df = transform_dates_and_csl(input_feature_train_df)
+            input_feature_test_df = transform_dates_and_csl(input_feature_test_df)
             
             
             target_feature_train_df = target_feature_train_df.map({'Y': 1 , 'N' : 0}).astype(int)
