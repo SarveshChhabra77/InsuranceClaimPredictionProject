@@ -15,7 +15,7 @@ class DataIngestion:
             raise ClaimPredictionException(e,sys)
     def export_data_as_dataframe(self):
         try:
-            df = pd.read_csv(r'D:\Insurance Claim Prediction Project\data\raw\insurance_claims.csv')
+            df = pd.read_csv(os.path.join('data', 'raw', 'insurance_claims.csv'))
             return df
         except Exception as e:
             raise ClaimPredictionException(e,sys)

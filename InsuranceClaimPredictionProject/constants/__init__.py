@@ -11,7 +11,7 @@ Train_File_Name:str='Train.csv'
 Test_File_Name:str='Test.csv'
 Saved_Model_Dir:str=os.path.join('saved_models')
 Model_File_Name:str='model.pkl'
-Schema_file_path:str='D:\Insurance Claim Prediction Project\data_schema\__init__.py'
+Schema_file_path:str=os.path.join('data_schema','__init__.py')
 
 
 
